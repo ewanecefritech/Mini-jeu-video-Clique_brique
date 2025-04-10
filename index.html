@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini jeu video</title>
+</head>
+<body>
+   <style>
+    body
+    {
+        margin: 0;
+        overFlow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    #game-container
+    {
+        width: 100w;
+        height: 100px;
+        position: relative;
+
+    }
+
+    #player
+    {
+        width: 50px;
+        height: 50px;
+        background-color: #3498db;
+        position: absolute;
+        bottom: 100px;
+        right: 50%;
+
+    }
+
+    .obstacle
+
+    {
+        width: 30px;
+        height: 30px;
+        background-color: #e74c3c;
+        position: absolute;
+        bottom: 100px;
+        right: -30px;
+
+    }
+
+    #score
+    {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+        font-family: Arial, Arial, Helvetica, sans-serif;
+    }
+
+    #restart
+    {
+        display: none;
+        position: fixed;
+        transform: translate(-50%,-50%);
+        padding: 10px 20px;
+        font-size: 20px;
+        top: 50%;
+        left: 50%;
+    }
+
+   </style> 
+   <body>
+    <div id="game-contaimer">
+    <div id="score"> Score : 0</div>
+    <div id="player"></div>
+    <button id="frestart">RestartGame</button>
+    </div>
+
+    <script>
+        const player = document.getElementById('player');
+        const score = document.getElementById('score');
+        const RestartButton = document.getElementById('restart');
+
+        let isJumping = false;
+        let Score = 0 ;
+        let obstacleLoop;
+
+
+            function Jump() {
+                if (!isJumping) {
+                    isJumping = true;
+                    let jumpHeight = 100;
+                    let jumpUp = setInterval(
+                        ()=>{
+                            if (jumpHeight <=0) {
+                                clearInterval(jumpUp);
+                                fall();
+                            }
+                            jumpHeight -= 5;
+                            player.style.transform = `tramslateY(-${jumpHeight}px)`;
+                        },20);
+                }
+            }
+
+            function fall() {
+                let fallHeight = 0;
+                let falling = setInterval(
+                    ()=>{
+                        if (fallHeight>=100) {
+                            clearInterval(falling);
+                            isJumping = false;
+                        }
+                        fallHeight += 5;
+                        player.style.transform = `translateY(-${100 - fallHeight}px)`;
+                    },20);
+
+                }
+                    function createObstacle() {
+                        const obstacle = document.createElement('div');
+                        obstacle.classList.add('obstacle');
+                        obstacle.style.right= '-30px';
+
+                        document.getElementById('game-contaimer').appendChild(obstacle);
+
+                        let position = -30;
+                        const move = setInterval(
+                            ()=>{
+                                position += 5;
+                                obstacle.style.right=`${position}px`;
+
+                          
+                        
+                            //Collision detection
+
+                            const playerRect = player.getBoundingClientRect();
+                            const obstacleRect = `obstaacle.getBoundingClientRect()`;
+
+                            if (playerrect.left < obstacleRect.right && playerRect.right > obstacleRect.left && playerRect.top < obstacleRect.bottom && playerRect.bottom > obstacleRect.top) {
+                                gameOver();
+                            }
+
+                            if (position > window.innerWidth) {
+                                clearInterval(move);
+                                obstacle.remove();
+                            }  
+                        },20);
+                    }
+
+                    function UpdateScore() {
+                        score++;
+                        scoreElement.textContent = `Score:${score}`;
+
+                        function gameOver() {
+                            clearInterval(gameLoop);
+                            clearInterval(obstacleLoop);
+                            RestartButton.style.display = 'block';
+                        }
+                    }
+                        function restartGame(){
+                            score = 0;
+                            scoreElement.textContent = `Score : 0`;
+                            RestartButton.button.style.display = none;
+
+                            document.querySelectorAll('obstacle').forEach(obs.remove());
+                            player.style.transform = 'translateY(0)';
+                                startGame();
+                        }
+
+                        function startGame(){
+                            gameLoop = setInterval(UpdateScore, 1000);
+                            obstacleLoop = setInterval(UpdateScore, 2000);
+
+                        }
+
+                        document.addEventListener('keydown', 
+                        (e)=>{
+                            if (e.code === 'Space') {
+                                jumpe();
+                            }
+                        });
+                    
+            
+                startGame();
+    </script>
+   </body>
+</body>
+</html>
